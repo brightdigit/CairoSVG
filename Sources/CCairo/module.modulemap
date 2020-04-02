@@ -5,6 +5,7 @@ module CCairo [system] {
 	link "cairo-gobject"
 	link "gobject-2.0"
 	link "glib-2.0"
+  link "librsvg-2.0"
 
 	export *
 }

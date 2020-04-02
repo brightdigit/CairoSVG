@@ -3,6 +3,15 @@ import CCairo
 @testable import Cairo
 
 class CairoTests: XCTestCase {
+  
+  func testReadSVG() {
+    var error : UnsafeMutablePointer<GError>! = nil
+    
+    let path = URL(fileURLWithPath: #file).deletingLastPathComponent().appendingPathComponent("/../../Logo.svg").path
+    let handle = rsvg_handle_new_from_file("", &error)
+    debugPrint(error.pointee)
+    debugPrint(handle?.pointee)
+  }
 
     func testSurface() {
         let width = 320

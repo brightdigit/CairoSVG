@@ -11,10 +11,10 @@ let package = Package(
         .package(url: "https://github.com/rhx/SwiftGObject.git", .branch("master"))
     ],
     targets: [
-	.systemLibrary(name: "CCairo", pkgConfig: "cairo glib-2.0 gio-unix-2.0",
+	.systemLibrary(name: "CCairo", pkgConfig: "cairo glib-2.0 gio-unix-2.0 librsvg-2.0",
 	    providers: [
-		.brew(["cairo", "glib", "glib-networking", "gobject-introspection"]),
-		.apt(["libcairo2-dev", "libglib2.0-dev", "glib-networking", "gobject-introspection", "libgirepository1.0-dev"])
+		.brew(["cairo", "glib", "glib-networking", "gobject-introspection", "librsvg"]),
+		.apt(["libcairo2-dev", "libglib2.0-dev", "glib-networking", "gobject-introspection", "libgirepository1.0-dev", "librsvg"])
 	    ]),
         .target(name: "Cairo", dependencies: ["CCairo", "GLibObject"]),
         .testTarget(name: "CairoTests", dependencies: ["Cairo"]),

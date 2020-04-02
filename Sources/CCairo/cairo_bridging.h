@@ -25,4 +25,5 @@ struct _cairo_region {};
 #ifdef __APPLE__
 #include <cairo-quartz-image.h>
 #include <cairo-quartz.h>
+#import <librsvg/rsvg.h>
 #endif
