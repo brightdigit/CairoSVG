@@ -6,6 +6,20 @@
 	objectVersion = 48;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		B3A6159E2495A68000AFB7D7 /* CairoSVG.xcframework */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = B3A6159F2495A68000AFB7D7 /* Build configuration list for PBXAggregateTarget "CairoSVG.xcframework" */;
+			buildPhases = (
+				B3A615A22495A6A200AFB7D7 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = CairoSVG.xcframework;
+			productName = CairoSVG.xcframework;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		B3081399218A067800DB07D0 /* geometry.svg in Resources */ = {isa = PBXBuildFile; fileRef = B3081398218A067300DB07D0 /* geometry.svg */; };
 		B3136DD91F90E96A0002B7AB /* cairo.h in Headers */ = {isa = PBXBuildFile; fileRef = B3136DD81F90E96A0002B7AB /* cairo.h */; };
@@ -4109,9 +4123,13 @@
 						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
+					B3A6159E2495A68000AFB7D7 = {
+						CreatedOnToolsVersion = 11.5;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
-			buildConfigurationList = B37C74391F8C58F300DF505B /* Build configuration list for PBXProject "Speculid" */;
+			buildConfigurationList = B37C74391F8C58F300DF505B /* Build configuration list for PBXProject "CairoSVG" */;
 			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -4127,6 +4145,7 @@
 				B37C74881F8C5B5C00DF505B /* CairoSVG */,
 				B3136E8C1F90FD3D0002B7AB /* CairoSVGTests */,
 				B324472023D2458300549D30 /* TestSetup */,
+				B3A6159E2495A68000AFB7D7 /* CairoSVG.xcframework */,
 			);
 		};
 /* End PBXProject section */
@@ -4150,6 +4169,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		B3A615A22495A6A200AFB7D7 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "xcodebuild archive -scheme CairoSVG -destination \"platform=macOS\" -archivePath \"$TEMP_DIR/CairoSVG.xcarchive\" SKIP_INSTALL=NO\nxcodebuild -create-xcframework -framework \"$TEMP_DIR/CairoSVG.xcarchive/Products/Library/Frameworks/CairoSVG.framework\" -output \"${TARGET_BUILD_DIR}/CairoSVG.xcframework\"\n";
+		};
 		B3E211A820E573B9009EA554 /* Installing Libaries */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -4402,6 +4438,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = NO;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -4450,6 +4487,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = NO;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -4493,6 +4531,24 @@
 			};
 			name = Release;
 		};
+		B3A615A02495A68000AFB7D7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = MLT7M394S7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B3A615A12495A68000AFB7D7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = MLT7M394S7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -4514,7 +4570,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B37C74391F8C58F300DF505B /* Build configuration list for PBXProject "Speculid" */ = {
+		B37C74391F8C58F300DF505B /* Build configuration list for PBXProject "CairoSVG" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B37C744A1F8C58F300DF505B /* Debug */,
@@ -4528,6 +4584,15 @@
 			buildConfigurations = (
 				B37C74931F8C5B5C00DF505B /* Debug */,
 				B37C74941F8C5B5C00DF505B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3A6159F2495A68000AFB7D7 /* Build configuration list for PBXAggregateTarget "CairoSVG.xcframework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3A615A02495A68000AFB7D7 /* Debug */,
+				B3A615A12495A68000AFB7D7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
