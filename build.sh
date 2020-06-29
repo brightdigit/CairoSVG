@@ -6,4 +6,7 @@ do
    # do whatever on $i
 done
 
-# find Dependencies -type f -name '*.dylib' | xargs -I {} echo "    - sdk: {}"
+echo "targets:" > dependencies.yml
+echo "  CairoSVG:" >> dependencies.yml
+echo "    dependencies:" >> dependencies.yml
+find Dependencies -type f -name '*.dylib' | xargs -I {} echo "    - sdk: {}" >> dependencies.yml
