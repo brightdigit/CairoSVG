@@ -6,8 +6,10 @@ targets:
   CairoSVG:
     type: framework
     platform: macOS
-    deploymentTarget: "10.6"
     sources: [frameworks/cairosvg]
+    postBuildScripts:
+      - script: "${SRCROOT}/scripts/fix_dylibs.sh" "${TARGET_BUILD_DIR}/${EXECUTABLE_PATH}"
     settings: 
-        HEADER_SEARCH_PATHS: Dependencies/**
-        LIBRARY_SEARCH_PATHS: Dependencies/**
+        HEADER_SEARCH_PATHS: $(SRCROOT)/Dependencies/**
+        LIBRARY_SEARCH_PATHS: $(SRCROOT)/Dependencies/**
+        LD_RUNPATH_SEARCH_PATHS: "@loader_path/Frameworks"

@@ -1,4 +1,6 @@
-libraries=(cairo fontconfig freetype fribidi gdk-pixbuf gettext glib graphite2 harfbuzz icu4c libcroco libffi libpng librsvg pango pcre pixman)
+rm -rf Dependencies
+mkdir -p Dependencies
+libraries=(lzo cairo fontconfig freetype fribidi gdk-pixbuf gettext glib graphite2 harfbuzz icu4c libcroco libffi libpng librsvg pango pcre pixman)
 for library in "${libraries[@]}"
 do
    brew install $library
@@ -9,4 +11,5 @@ done
 echo "targets:" > dependencies.yml
 echo "  CairoSVG:" >> dependencies.yml
 echo "    dependencies:" >> dependencies.yml
-find Dependencies -type f -name '*.dylib' | xargs -I {} echo "    - sdk: {}" >> dependencies.yml
+find Dependencies -type f -name '*.dylib' | xargs -I {} echo "    - sdk: \"$(SRCROOT)/{}\"" >> dependencies.yml
+xcodegen

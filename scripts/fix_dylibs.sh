@@ -16,13 +16,14 @@ for lib in $LIBS; do
   echo "Fixing `basename $lib` for Framework"
   fi
 done
-
+echo "Fixing Interdependencies"
 deps=`ls "$FRAMEWORKS_FOLDER_PATH" | awk -F' ' '{ print $1 }'`
 for lib in $deps; do
   install_name_tool -id @rpath/`basename $lib` "`dirname $1`/Frameworks/`basename $lib`"
   install_name_tool -change $lib @rpath/`basename $lib` "$1"
   dylib="`dirname $1`/Frameworks/`basename $lib`"
   deps=`otool -L "$dylib" | grep "/opt\|Cellar\|loader_path" | awk -F' ' '{ print $1 }'`
+  echo "Fixing Dependencies for $lib"
   for dependency in $deps; do
       EXPECTED_PATH="`dirname $1`/Frameworks/`basename $dependency`"
       if [ ! -f $EXPECTED_PATH ]; then
