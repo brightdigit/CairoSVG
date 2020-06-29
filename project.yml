@@ -7,6 +7,9 @@ targets:
     platform: macOS
     deploymentTarget: "10.6"
     sources: [frameworks/cairosvg]
+    settings: 
+        HEADER_SEARCH_PATHS: Dependencies/**
+        LIBRARY_SEARCH_PATHS: Dependencies/**
     dependencies:
     - sdk: Dependencies/libpng/1.6.37/lib/libpng16.16.dylib
     - sdk: Dependencies/pixman/0.40.0/lib/libpixman-1.0.40.0.dylib
@@ -15,12 +18,6 @@ targets:
     - sdk: Dependencies/pango/1.44.7/lib/libpangoft2-1.0.0.dylib
     - sdk: Dependencies/pango/1.44.7/lib/libpangocairo-1.0.0.dylib
     - sdk: Dependencies/gdk-pixbuf/2.40.0_1/lib/libgdk_pixbuf-2.0.0.dylib
-    - sdk: Dependencies/icu4c/66.1/lib/libicuuc.66.1.dylib
-    - sdk: Dependencies/icu4c/66.1/lib/libicudata.66.1.dylib
-    - sdk: Dependencies/icu4c/66.1/lib/libicutest.66.1.dylib
-    - sdk: Dependencies/icu4c/66.1/lib/libicuio.66.1.dylib
-    - sdk: Dependencies/icu4c/66.1/lib/libicui18n.66.1.dylib
-    - sdk: Dependencies/icu4c/66.1/lib/libicutu.66.1.dylib
     - sdk: Dependencies/icu4c/67.1/lib/libicudata.67.1.dylib
     - sdk: Dependencies/icu4c/67.1/lib/libicutest.67.1.dylib
     - sdk: Dependencies/icu4c/67.1/lib/libicuuc.67.1.dylib
