@@ -2,13 +2,18 @@ name: CairoSVG
 include: dependencies.yml
 options:
   bundleIdPrefix: com.brightdigit
+settings:
+  DEVELOPMENT_TEAM: MLT7M394S7
+  CODE_SIGN_IDENTITY: "Apple Development"
+  CODE_SIGN_STYLE: Automatic
 targets:
   CairoSVG:
     type: framework
     platform: macOS
-    sources: [frameworks/cairosvg]
+    sources: 
+        - frameworks/cairosvg
     postBuildScripts:
-      - script: "${SRCROOT}/scripts/fix_dylibs.sh" "${TARGET_BUILD_DIR}/${EXECUTABLE_PATH}"
+      - script: "\"${SRCROOT}/scripts/fix_dylibs.sh\" \"${TARGET_BUILD_DIR}/${EXECUTABLE_PATH}\""
     settings: 
         HEADER_SEARCH_PATHS: $(SRCROOT)/Dependencies/**
         LIBRARY_SEARCH_PATHS: $(SRCROOT)/Dependencies/**
