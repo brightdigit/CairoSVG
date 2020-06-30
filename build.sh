@@ -37,6 +37,7 @@ do
  echo "      codeSign: true" >> $DEPFILE
 
  echo "         - path: \"$dependency\"" >> $CPFILE
+ echo "           group: Frameworks" >> $CPFILE
  echo "           buildPhase:" >> $CPFILE
  echo "             copyFiles:" >> $CPFILE
  echo "               destination: frameworks" >> $CPFILE

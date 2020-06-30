@@ -1,6 +1,12 @@
-@testable import CairoSVG
-import XCTest
+//
+//  CairoSVGTests.swift
+//  CairoSVGTests
+//
+//  Created by Leo Dion on 6/29/20.
+//
 
+import XCTest
+import CairoSVG
 extension NSColor: CairoColorProtocol {
   public var red: Double {
     Double(redComponent)
@@ -45,19 +51,18 @@ class ImageSpecification: NSObject, ImageSpecificationProtocol {
 }
 
 class CairoSVGTests: XCTestCase {
-  override func setUp() {
+    override func setUpWithError() throws {
     super.setUp()
-    // Put setup code here. This method is called before the invocation of each test method in the class.
-  }
+        // Put setup code here. This method is called before the invocation of each test method in the class.
+    }
 
-  override func tearDown() {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
-    super.tearDown()
-  }
+    override func tearDownWithError() throws {
+        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    }
 
   func testExample() {
-    // This is an example of a functional test case.
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
+        // This is an example of a functional test case.
+        // Use XCTAssert and related functions to verify your tests produce the correct results.
     let expectedWidth: CGFloat = 90.0
     let bundle = Bundle(for: type(of: self))
     let url = bundle.url(forResource: "geometry", withExtension: "svg")!
@@ -72,12 +77,12 @@ class CairoSVGTests: XCTestCase {
     XCTAssert(FileManager.default.fileExists(atPath: destImageFile.url.path))
     let image = NSImage(byReferencing: destImageFile.url)
     XCTAssertEqual(image.size.width, expectedWidth)
-  }
+    }
 
   func testPerformanceExample() {
-    // This is an example of a performance test case.
-    measure {
-      // Put the code you want to measure the time of here.
+        // This is an example of a performance test case.
+        measure {
+            // Put the code you want to measure the time of here.
+        }
     }
-  }
 }
