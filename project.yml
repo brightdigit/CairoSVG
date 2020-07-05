@@ -4,10 +4,6 @@ options:
   bundleIdPrefix: com.brightdigit
   deploymentTarget: 
     macOS: 10.15
-settings:
-  DEVELOPMENT_TEAM: MLT7M394S7
-  CODE_SIGN_IDENTITY: "Apple Development"
-  CODE_SIGN_STYLE: Automatic
 targets:
   CairoSVG:
     type: framework
