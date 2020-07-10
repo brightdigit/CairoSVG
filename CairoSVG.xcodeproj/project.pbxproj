@@ -292,6 +292,7 @@
 		A3DE634A99955C3F85474DA0 /* libgdk_pixbuf-2.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libgdk_pixbuf-2.0.0.dylib"; path = "Dependencies/gdk-pixbuf/2.40.0_1/lib/libgdk_pixbuf-2.0.0.dylib"; sourceTree = "<group>"; };
 		A6F7A0941ECF40B19E7B8390 /* libffi.7.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libffi.7.dylib; path = Dependencies/libffi/3.3/lib/libffi.7.dylib; sourceTree = "<group>"; };
 		B2F8F90FE787A927609166C3 /* libpango-1.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libpango-1.0.0.dylib"; path = "Dependencies/pango/1.44.7/lib/libpango-1.0.0.dylib"; sourceTree = SOURCE_ROOT; };
+		B33663F524B8E4E700759AAE /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		B4753EBDEAF775ECDD82C784 /* liblzo2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblzo2.2.dylib; path = Dependencies/lzo/2.10/lib/liblzo2.2.dylib; sourceTree = SOURCE_ROOT; };
 		B4C2FD69B7AC9E24AFAC0235 /* SurfaceHandle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SurfaceHandle.h; sourceTree = "<group>"; };
 		B71A4B53DBFA881AA66028CF /* libicudata.67.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicudata.67.1.dylib; path = Dependencies/icu4c/67.1/lib/libicudata.67.1.dylib; sourceTree = "<group>"; };
@@ -519,6 +520,7 @@
 		E7D54EC6776387E44E3944BF = {
 			isa = PBXGroup;
 			children = (
+				B33663F524B8E4E700759AAE /* Package.swift */,
 				F2423541C0AD2340C29E795B /* Frameworks */,
 				8D174CEE4B1A157C0FD424D9 /* Sources */,
 				4E077EEEE4610BA9E782562F /* Tests */,
@@ -655,7 +657,7 @@
 		883FDC10125625D02C8F9F84 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1020;
+				LastUpgradeCheck = 1200;
 			};
 			buildConfigurationList = D85203D7C9EAF0F368908599 /* Build configuration list for PBXProject "CairoSVG" */;
 			compatibilityVersion = "Xcode 10.0";
@@ -663,6 +665,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = E7D54EC6776387E44E3944BF;
 			projectDirPath = "";
@@ -761,7 +764,7 @@
 		4995B60D7BCFFE4202B30669 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -786,7 +789,7 @@
 		7F5F82EDEBD8EACB9BDBCBDC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -833,6 +836,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -901,6 +905,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
