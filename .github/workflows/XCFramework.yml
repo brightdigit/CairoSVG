@@ -19,8 +19,8 @@ jobs:
       run: brew install jq
     - name: Bump version and push tag
       run: |
-        curl https://api.github.com/repos/${{ github.repository }}/releases | jq -r '.[0].tag_name' | xargs -I {}  ./semver bump patch {}
-        TAG_NAME=$(curl https://api.github.com/repos/${{ github.repository }}/releases | jq -r '.[0].tag_name' | xargs -I {}  ./semver bump patch {})
+        curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/${{ github.repository }}/releases | jq -r '.[0].tag_name' | xargs -I {}  $GITHUB_WORKSPACE/semver bump patch {}
+        TAG_NAME=$(curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/${{ github.repository }}/releases | jq -r '.[0].tag_name' | xargs -I {}   $GITHUB_WORKSPACE/semver bump patch {})
         echo "::set-output name=tag::$TAG_NAME"
       id: semver
     - name: Output Tag
