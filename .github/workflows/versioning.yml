@@ -11,10 +11,5 @@ jobs:
 
     steps:
     - name: Bump version and push tag
-      run: |
-        curl https://api.github.com/repos/${{ github.repository }}/releases | jq -r '.[0].tag_name' | xargs -I {}  ./semver bump patch {}
-        TAG_NAME=$(curl https://api.github.com/repos/${{ github.repository }}/releases | jq -r '.[0].tag_name' | xargs -I {}  ./semver bump patch {})
-        echo "::set-output name=tag::$TAG_NAME"
+      run: curl https://api.github.com/repos/${{ github.repository }}/releases | jq -r '.[0].tag_name' | xargs -I {}  ./semver bump patch {}        
       id: semver
-    - name: Output Tag
-      run: echo ${{ steps.semver.outputs.tag }}
