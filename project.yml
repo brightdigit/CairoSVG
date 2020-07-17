@@ -18,6 +18,7 @@ targets:
         HEADER_SEARCH_PATHS: $(SRCROOT)/Dependencies/**
         LIBRARY_SEARCH_PATHS: $(SRCROOT)/Dependencies/**
         LD_RUNPATH_SEARCH_PATHS: "@loader_path/Frameworks"
+        CODE_SIGN_IDENTITY: ${inherited}
   CairoSVGTests:
     type: bundle.unit-test
     platform: macOS
