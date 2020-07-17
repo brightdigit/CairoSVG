@@ -13,6 +13,7 @@ targets:
           group: Sources
     postBuildScripts:
       - script: "\"${SRCROOT}/scripts/fix_dylibs.sh\" \"${TARGET_BUILD_DIR}/${EXECUTABLE_PATH}\""
+      - script: "\"${SRCROOT}/scripts/codesign-framework.sh\""
     settings: 
         HEADER_SEARCH_PATHS: $(SRCROOT)/Dependencies/**
         LIBRARY_SEARCH_PATHS: $(SRCROOT)/Dependencies/**

@@ -14,16 +14,16 @@ exit 0
 fi
 fi
 
-if [ -z "${CODE_SIGN_ENTITLEMENTS}" ] ; then
-echo "CODE_SIGN_ENTITLEMENTS needs to be set for framework code-signing!"
+# if [ -z "${CODE_SIGN_ENTITLEMENTS}" ] ; then
+# echo "CODE_SIGN_ENTITLEMENTS needs to be set for framework code-signing!"
 
-if [ "${CONFIGURATION}" = "Release" ] ; then
-exit 1
-else
-# Code-signing is optional for non-release builds.
-exit 0
-fi
-fi
+# if [ "${CONFIGURATION}" = "Release" ] ; then
+# exit 1
+# else
+# # Code-signing is optional for non-release builds.
+# exit 0
+# fi
+# fi
 
 ITEMS=""
 
@@ -73,7 +73,7 @@ SAVED_IFS=$IFS
 for ITEM in $ITEMS;
 do
 echo "Signing '${ITEM}'"
-codesign --force --verbose --sign "${CODE_SIGN_IDENTITY_FOR_ITEMS}" --entitlements "${CODE_SIGN_ENTITLEMENTS}" "${ITEM}"
+codesign --force --verbose --sign "${CODE_SIGN_IDENTITY_FOR_ITEMS}" "${ITEM}"
 RESULT=$?
 if [[ $RESULT != 0 ]] ; then
 echo "Failed to sign '${ITEM}'."
