@@ -18,4 +18,8 @@ jobs:
     - name: Install JQ
       run: brew install jq
     - name: Bump version and push tag
-      run: curl https://api.github.com/repos/${{ github.repository }}/releases | jq -r '.[0].tag_name' | xargs -I {}  ./semver bump patch {}
+      run: echo "::set-output name=tag::(curl https://api.github.com/repos/${{ github.repository }}/releases | jq -r '.[0].tag_name' | xargs -I {}  ./semver bump patch {})"
+      id: semver
+    - name: Output Tag
+      run: echo ${{ steps.semver.outputs.tag }}  
+      
