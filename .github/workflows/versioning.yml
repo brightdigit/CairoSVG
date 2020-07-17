@@ -10,9 +10,10 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - name: Bump version and push tag
+    - uses: actions/checkout@v2
+    - name: test aPI
       run: |
-        curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/${{ github.repository }}/releases
+        curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/${{ github.repository }}/releases | jq -r '.[0].tag_name' | xargs -I {}  $GITHUB_WORKSPACE/semver bump patch {}
     - name: Bump version and push tag
       run: |
         curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/${{ github.repository }}/releases | jq -r '.[0].tag_name' | xargs -I {}  $GITHUB_WORKSPACE/semver bump patch {}
