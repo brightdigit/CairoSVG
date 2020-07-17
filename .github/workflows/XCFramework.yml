@@ -15,11 +15,12 @@ jobs:
       run: ./prepare.sh
     - name: Build Framework
       run: ./build.sh
+    - name: Compute Checksum
+      run: echo "::set-out name=checksum::$(swift package compute-checksum build/CairoSVG.xcframework.zip)"
     - name: Install JQ
       run: brew install jq
     - name: Bump version and push tag
       run: |
-        curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/${{ github.repository }}/releases | jq -r '.[0].tag_name' | xargs -I {}  $GITHUB_WORKSPACE/semver bump patch {}
         TAG_NAME=$(curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/${{ github.repository }}/releases | jq -r '.[0].tag_name' | xargs -I {}   $GITHUB_WORKSPACE/semver bump patch {})
         echo "::set-output name=tag::$TAG_NAME"
       id: semver
