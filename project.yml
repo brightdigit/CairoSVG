@@ -1,0 +1,27 @@
+name: CairoSVG
+include: dependencies.yml
+options:
+  bundleIdPrefix: com.brightdigit
+  deploymentTarget: 
+    macOS: 10.15
+targets:
+  CairoSVG:
+    type: framework
+    platform: macOS
+    sources: 
+        - path: Sources/CairoSVG
+          group: Sources
+    postBuildScripts:
+      - script: "\"${SRCROOT}/scripts/fix_dylibs.sh\" \"${TARGET_BUILD_DIR}/${EXECUTABLE_PATH}\""
+    settings: 
+        HEADER_SEARCH_PATHS: $(SRCROOT)/Dependencies/**
+        LIBRARY_SEARCH_PATHS: $(SRCROOT)/Dependencies/**
+        LD_RUNPATH_SEARCH_PATHS: "@loader_path/Frameworks"
+  CairoSVGTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources: 
+        - path: Tests/CairoSVGTests
+          group: Tests
+    dependencies:
+        - target: CairoSVG
