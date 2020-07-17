@@ -11,5 +11,5 @@ jobs:
 
     steps:
     - name: Bump version and push tag
-      run: curl https://api.github.com/repos/${{ github.repository }}/releases | jq -r '.[0].tag_name' | xargs -I {}  ./semver bump patch {}        
+      run: curl https://api.github.com/repos/${{ github.repository }}/releases
       id: semver
