@@ -1,0 +1,17 @@
+name: XCFramework
+
+on: [push]
+
+env:
+  DEVELOPER_DIR: /Applications/Xcode_12_beta.app/Contents/Developer
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Prepare Xcode Project
+      run: ./prepare.sh
+    - name: Build Framework
+      run: ./build.sh

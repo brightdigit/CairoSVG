@@ -55,4 +55,6 @@ cat $CPFILE >> dependencies.yml
 
 rm Dependencies/gettext/0.20.2_1/include/textstyle/stdbool.h
 
+brew install xcodegen
+
 xcodegen
