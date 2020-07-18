@@ -85,6 +85,10 @@ jobs:
       env:
          VERSION: ${{ steps.semver.outputs.tag }}
          CHECKSUM: ${{ steps.compute.outputs.checksum }}
+    - name: Extract branch name
+      shell: bash
+      run: echo "##[set-output name=name;]$(echo ${GITHUB_REF#refs/heads/})"
+      id: branch 
     - name: Commit files
       run: |
         git config --local user.email "action@github.com"
@@ -95,5 +99,6 @@ jobs:
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ steps.branch.outputs.name }}
 
 
