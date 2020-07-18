@@ -6,8 +6,53 @@ env:
   DEVELOPER_DIR: /Applications/Xcode_12_beta.app/Contents/Developer
 
 jobs:
-  build:
+  distribute:
     runs-on: macos-latest
+    if: "startsWith(github.event.head_commit.message, 'checksum update')"
+
+    steps:
+    - name: Get Artifact Name 
+      run: |
+        ARTIFACT_NAME=$(cut -d: -f2 ${{ github.event.head_commit.message }})
+        echo "::set-output name=name::$ARTIFACT_NAME"
+      id: artifact
+    - name: Output Name
+      run: echo ${{ steps.artifact.outputs.name }}
+    - name: Get Tag Name 
+      run: |
+        TAG_NAME=$(cut -d- -f1 ${{ steps.artifact.outputs.name }})
+        echo "::set-output name=name::$TAG_NAME"
+      id: tag
+    - uses: actions/download-artifact@v2
+      with:
+        name: ${{ steps.artifact.outputs.name }}
+        path: CairoSVG.xcframework.zip
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ steps.tag.outputs.name }}
+        release_name: ${{ steps.tag.outputs.name }}
+        draft: false
+        prerelease: false
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: CairoSVG.xcframework.zip
+        asset_name: CairoSVG.xcframework.zip
+        asset_content_type: application/zip
+     - uses: geekyeggo/delete-artifact@v1
+       with:
+         name: ${{ steps.artifact.outputs.name }}
+  upload:
+    runs-on: macos-latest
+    if: "!startsWith(github.event.head_commit.message, 'checksum update')"
 
     steps:
     - uses: actions/checkout@v2
@@ -17,6 +62,7 @@ jobs:
       run: ./build.sh
     - name: Compute Checksum
       run: echo "::set-out name=checksum::$(swift package compute-checksum build/CairoSVG.xcframework.zip)"
+      id: compute
     - name: Install JQ
       run: brew install jq
     - name: Bump version and push tag
@@ -26,3 +72,21 @@ jobs:
       id: semver
     - name: Output Tag
       run: echo ${{ steps.semver.outputs.tag }}
+    - uses: actions/upload-artifact@v2
+      with:
+        name: ${{ steps.semver.outputs.tag }}-${{ steps.compute.outputs.checksum }}
+        path: build/CairoSVG.xcframework.zip
+    - name: Update Package.swift
+      run: envsubst < Package.swift.template > Package.swift
+      env:
+         VERSION: ${{ steps.semver.outputs.tag }}
+         CHECKSUM: ${{ steps.compute.outputs.checksum }}
+    - name: Commit files
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add Package.swift
+        git commit -m "checksum update:${{ steps.semver.outputs.tag }}-${{ steps.compute.outputs.checksum }}" -a
+        git push
+
+
