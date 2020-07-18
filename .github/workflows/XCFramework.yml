@@ -13,7 +13,7 @@ jobs:
     steps:
     - name: Get Artifact Name 
       run: |
-        ARTIFACT_NAME=$(cut -d: -f2 ${{ github.event.head_commit.message }})
+        ARTIFACT_NAME=$(cut -d: -f2 "${{ github.event.head_commit.message }}")
         echo "::set-output name=name::$ARTIFACT_NAME"
       id: artifact
     - name: Output Name
