@@ -61,7 +61,9 @@ jobs:
     - name: Build Framework
       run: ./build.sh
     - name: Compute Checksum
-      run: echo "::set-out name=checksum::$(swift package compute-checksum build/CairoSVG.xcframework.zip)"
+      run: |
+        CHECKSUM=$(swift package compute-checksum build/CairoSVG.xcframework.zip)
+        echo "::set-out name=checksum::$CHECKSUM"
       id: compute
     - name: Install JQ
       run: brew install jq
