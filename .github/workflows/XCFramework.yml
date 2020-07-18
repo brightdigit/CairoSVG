@@ -13,14 +13,14 @@ jobs:
     steps:
     - name: Get Artifact Name 
       run: |
-        ARTIFACT_NAME=$(cut -d: -f2 "${{ github.event.head_commit.message }}")
+        ARTIFACT_NAME=$(echo "${{ github.event.head_commit.message }}" | cut -d: -f2)
         echo "::set-output name=name::$ARTIFACT_NAME"
       id: artifact
     - name: Output Name
       run: echo ${{ steps.artifact.outputs.name }}
     - name: Get Tag Name 
       run: |
-        TAG_NAME=$(cut -d- -f1 ${{ steps.artifact.outputs.name }})
+        TAG_NAME=$(echo "${{ steps.artifact.outputs.name }}" | cut -d- -f1)
         echo "::set-output name=name::$TAG_NAME"
       id: tag
     - uses: actions/download-artifact@v2
