@@ -56,6 +56,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        persist-credentials: false
     - name: Prepare Xcode Project
       run: ./prepare.sh
     - name: Build Framework
@@ -63,7 +65,7 @@ jobs:
     - name: Compute Checksum
       run: |
         CHECKSUM=$(swift package compute-checksum build/CairoSVG.xcframework.zip)
-        echo "::set-out name=checksum::$CHECKSUM"
+        echo "::set-output name=checksum::$CHECKSUM"
       id: compute
     - name: Install JQ
       run: brew install jq
@@ -89,6 +91,9 @@ jobs:
         git config --local user.name "GitHub Action"
         git add Package.swift
         git commit -m "checksum update:${{ steps.semver.outputs.tag }}-${{ steps.compute.outputs.checksum }}" -a
-        git push
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
 
 
