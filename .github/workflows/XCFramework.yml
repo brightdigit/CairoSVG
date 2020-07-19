@@ -30,7 +30,7 @@ jobs:
       run: brew install jq
     - name: Parse Artifact Metadata
       run: |
-        ARTIFACT_METADATA=$(curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/brightdigit/CairoSVG/actions/runs/${{ steps.run.outputs.id }}/artifacts | jq -r '.artifacts[] | select(.name == "${{ steps.commit.outputs.message }}")')
+        ARTIFACT_METADATA=$(curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' $GITHUB_API_URL/repos/brightdigit/CairoSVG/actions/runs/${{ steps.run.outputs.id }}/artifacts | jq -r '.artifacts[] | select(.name == "${{ steps.commit.outputs.message }}")')
         ARTIFACT_URL=$(jq .archive_download_url <<< $ARTIFACT_METADATA)
         ARTIFACT_ID=$(jq .id <<< $ARTIFACT_METADATA)
         echo "::set-output name=id::$ARTIFACT_ID"
@@ -38,8 +38,7 @@ jobs:
       id: artifact
     - name: Download Zip
       run: |
-        curl -L --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' -o temporary.zip ${{ steps.artifact.outputs.url }}
-        unzip temporary.zip 
+        curl  -SL -L --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' ${{ steps.artifact.outputs.url }} | tar -xf - -C $GITHUB_WORKSPACE
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -62,7 +61,7 @@ jobs:
         asset_content_type: application/zip
     - name: Delete Artifact
       run: |
-        curl -X DELETE --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/brightdigit/CairoSVG/actions/artifacts/${{ steps.artifact.outputs.id }}
+        curl -X DELETE --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' $GITHUB_API_URL/repos/${{ github.repository }}/actions/artifacts/${{ steps.artifact.outputs.id }}
   upload:
     runs-on: macos-latest
     if: "!startsWith(github.event.head_commit.message, 'checksum update')"
@@ -84,7 +83,7 @@ jobs:
       run: brew install jq
     - name: Bump version and push tag
       run: |
-        TAG_NAME=$(curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/${{ github.repository }}/releases | jq -r '.[0].tag_name' | xargs -I {}   $GITHUB_WORKSPACE/semver bump patch {})
+        TAG_NAME=$(curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' $GITHUB_API_URL/repos/${{ github.repository }}/releases | jq -r '.[0].tag_name' | xargs -I {} $GITHUB_WORKSPACE/semver bump patch {})
         echo "::set-output name=tag::$TAG_NAME"
       id: semver
     - name: Output Tag
