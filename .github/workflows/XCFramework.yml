@@ -81,7 +81,7 @@ jobs:
       run: echo ${{ steps.semver.outputs.tag }}
     - uses: actions/upload-artifact@v2
       with:
-        name: ${{ steps.semver.outputs.tag }}-$GITHUB_RUN_ID
+        name: ${{ steps.semver.outputs.tag }}-${{ github.run_id }}
         path: build/CairoSVG.xcframework.zip
     - name: Update Package.swift
       run: envsubst < Package.swift.template > Package.swift
