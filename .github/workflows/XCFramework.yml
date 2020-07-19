@@ -81,7 +81,7 @@ jobs:
       run: echo ${{ steps.semver.outputs.tag }}
     - uses: actions/upload-artifact@v2
       with:
-        name: ${{ steps.semver.outputs.tag }}-${{ GITHUB_RUN_ID }}
+        name: ${{ steps.semver.outputs.tag }}-${ GITHUB_RUN_ID }
         path: build/CairoSVG.xcframework.zip
     - name: Update Package.swift
       run: envsubst < Package.swift.template > Package.swift
@@ -97,7 +97,7 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add Package.swift
-        git commit -m "checksum update:${{ steps.semver.outputs.tag }}-${{ GITHUB_RUN_ID }}" -a
+        git commit -m "checksum update:${{ steps.semver.outputs.tag }}-${ GITHUB_RUN_ID }" -a
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
