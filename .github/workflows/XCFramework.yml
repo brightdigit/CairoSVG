@@ -30,9 +30,9 @@ jobs:
       run: brew install jq
     - name: Download Zip
       run: |
-        curl https://api.github.com/repos/brightdigit/CairoSVG/actions/runs/${{ steps.run.outputs.id }}/artifacts
-        curl https://api.github.com/repos/brightdigit/CairoSVG/actions/runs/${{ steps.run.outputs.id }}/artifacts | jq -r '.artifacts[] | select(.name == "${{ steps.commit.outputs.message }}") | .archive_download_url'
-        curl https://api.github.com/repos/brightdigit/CairoSVG/actions/runs/${{ steps.run.outputs.id }}/artifacts | jq -r '.artifacts[] | select(.name == "${{ steps.commit.outputs.message }}") | .archive_download_url' | xargs curl -L --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' -o temporary.zip
+        curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/brightdigit/CairoSVG/actions/runs/${{ steps.run.outputs.id }}/artifacts
+        curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/brightdigit/CairoSVG/actions/runs/${{ steps.run.outputs.id }}/artifacts | jq -r '.artifacts[] | select(.name == "${{ steps.commit.outputs.message }}") | .archive_download_url'
+        curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/brightdigit/CairoSVG/actions/runs/${{ steps.run.outputs.id }}/artifacts | jq -r '.artifacts[] | select(.name == "${{ steps.commit.outputs.message }}") | .archive_download_url' | xargs curl -L --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' -o temporary.zip
         unzip temporary.zip 
     - name: Create Release
       id: create_release
