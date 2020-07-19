@@ -17,8 +17,8 @@ let package = Package(
     // Targets can depend on other targets in this package, and on products in packages which this package depends on.
     .binaryTarget(
       name: "CairoSVG",
-      url: "https://github.com/brightdigit/CairoSVG/releases/download/0.1.3/CairoSVG.xcframework.zip",
-      checksum: "013ef0cc62298fe71fd614f818cad773165dc55ed6f365e51d73274f1794f828"
+      url: "https://github.com/brightdigit/CairoSVG/releases/download/0.1.4/CairoSVG.xcframework.zip",
+      checksum: "78416d98fe6a42636703e524ad8b574a070936e78999a1e8886c3fbc05615f19"
     )
   ]
 )
