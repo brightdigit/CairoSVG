@@ -18,7 +18,7 @@ let package = Package(
     .binaryTarget(
       name: "CairoSVG",
       url: "https://github.com/brightdigit/CairoSVG/releases/download/0.1.1/CairoSVG.xcframework.zip",
-      checksum: "b5c5b6ec5382953eab787bda0529863cb80adab31182be89b9d7cbae0ddd3a90"
+      checksum: "08aee00540862188831b94797a645cdf38258571561dbf3e5c174e3ed2d8015d"
     )
   ]
 )
