@@ -62,7 +62,7 @@ jobs:
         asset_content_type: application/zip
     - name: Delete Artifact
       run: |
-        curl -X DELETE --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/brightdigit/CairoSVG/actions/actions/artifacts/${{ steps.artifact.outputs.id }}
+        curl -X DELETE --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/brightdigit/CairoSVG/actions/artifacts/${{ steps.artifact.outputs.id }}
   upload:
     runs-on: macos-latest
     if: "!startsWith(github.event.head_commit.message, 'checksum update')"
