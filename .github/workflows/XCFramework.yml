@@ -21,18 +21,24 @@ jobs:
         TAG_NAME=$(echo "${{ steps.commit.outputs.message }}" | cut -d- -f1)
         echo "::set-output name=name::$TAG_NAME"
       id: tag
-    - name: Get Artifact Id 
+    - name: Get Run Id 
       run: |
         RUN_ID=$(echo "${{ steps.commit.outputs.message }}" | cut -d- -f2)
         echo "::set-output name=id::$RUN_ID"
       id: run
     - name: Install JQ
       run: brew install jq
+    - name: Parse Artifact Metadata
+      run: |
+        ARTIFACT_METADATA=$(curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/brightdigit/CairoSVG/actions/runs/${{ steps.run.outputs.id }}/artifacts | jq -r '.artifacts[] | select(.name == "${{ steps.commit.outputs.message }}")')
+        ARTIFACT_URL=$(jq .archive_download_url <<< $ARTIFACT_METADATA)
+        ARTIFACT_ID=$(jq .archive_download_url <<< $ARTIFACT_METADATA)
+        echo "::set-output name=id::$ARTIFACT_ID"
+        echo "::set-output name=url::$ARTIFACT_URL"
+      id: artifact
     - name: Download Zip
       run: |
-        curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/brightdigit/CairoSVG/actions/runs/${{ steps.run.outputs.id }}/artifacts
-        curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/brightdigit/CairoSVG/actions/runs/${{ steps.run.outputs.id }}/artifacts | jq -r '.artifacts[] | select(.name == "${{ steps.commit.outputs.message }}") | .archive_download_url'
-        curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/brightdigit/CairoSVG/actions/runs/${{ steps.run.outputs.id }}/artifacts | jq -r '.artifacts[] | select(.name == "${{ steps.commit.outputs.message }}") | .archive_download_url' | xargs curl -L --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' -o temporary.zip
+        curl -L --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' -o temporary.zip ${{ steps.artifact.outputs.url }}
         unzip temporary.zip 
     - name: Create Release
       id: create_release
@@ -54,9 +60,9 @@ jobs:
         asset_path: CairoSVG.xcframework.zip
         asset_name: CairoSVG.xcframework.zip
         asset_content_type: application/zip
-    - uses: geekyeggo/delete-artifact@v1
-      with:
-         name: ${{ steps.artifact.outputs.name }}
+    - name: Delete Artifact
+      uses: |
+        curl -X DELETE --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/brightdigit/CairoSVG/actions/actions/artifacts/${{ steps.artifact.outputs.id }}
   upload:
     runs-on: macos-latest
     if: "!startsWith(github.event.head_commit.message, 'checksum update')"
