@@ -71,7 +71,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        upload_url: ${{ steps.create_release.outputs.upload_url }} 
         asset_path: CairoSVG.xcframework.zip
         asset_name: CairoSVG.xcframework.zip
         asset_content_type: application/zip
@@ -113,32 +113,32 @@ jobs:
       id: compute
     - name: Install JQ
       run: brew install jq
-      if: "${{ endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main') || endsWith(github.head_ref,'develop') }}"
+      if: ${{ endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main') || endsWith(github.head_ref,'develop') }}
     - uses: actions/upload-artifact@v2
-      if: "${{ endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main') || endsWith(github.head_ref,'develop') }}"
+      if: ${{ endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main') || endsWith(github.head_ref,'develop') }}
       with:
         name: ${{ steps.semver.outputs.tag }}-${{ github.run_id }}
         path: build/CairoSVG.xcframework.zip
     - name: Update Package.swift
-      if: "${{ endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main') || endsWith(github.head_ref,'develop') }}"
+      if: ${{ endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main') || endsWith(github.head_ref,'develop') }}
       run: envsubst < Package.swift.template > Package.swift
       env:
          VERSION: ${{ steps.semver.outputs.tag }}
          CHECKSUM: ${{ steps.compute.outputs.checksum }}
     - name: Extract branch name
-      if: "${{ endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main') || endsWith(github.head_ref,'develop') }}"
+      if: ${{ endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main') || endsWith(github.head_ref,'develop') }}
       shell: bash
       run: echo "##[set-output name=name;]$(echo ${GITHUB_REF#refs/heads/})"
       id: branch 
     - name: Commit files
-      if: "${{ endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main') || endsWith(github.head_ref,'develop') }}" 
+      if: ${{ endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main') || endsWith(github.head_ref,'develop') }}
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add Package.swift
         git commit -m "checksum update:${{ steps.semver.outputs.tag }}-$GITHUB_RUN_ID" -a
     - name: Push changes
-      if: "${{ endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main') || endsWith(github.head_ref,'develop') }}"
+      if: ${{ endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main') || endsWith(github.head_ref,'develop') }}
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.PERSONAL_TOKEN }}
