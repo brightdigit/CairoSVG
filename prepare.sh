@@ -59,5 +59,6 @@ cat $CPFILE >> dependencies.yml
 rm Dependencies/gettext/0.20.2_1/include/textstyle/stdbool.h
 
 HOMEBREW_NO_AUTO_UPDATE=1 brew install xcodegen
+HOMEBREW_NO_AUTO_UPDATE=1 brew link xcodegen
 
 xcodegen
