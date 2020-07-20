@@ -96,14 +96,14 @@ jobs:
       id: semver
     - name: Caching Homebrew
       uses: actions/cache@v2
-      if: ${{ !endsWith(github.head_ref,'features') && !endsWith(github.head_ref,'main')}}
+      if: ${{ !endsWith(github.ref,'features') && !endsWith(github.ref,'main')}}
       with:
         path: /usr/local/Cellar
         key: ${{ runner.os }}-Homebrew-${{ steps.semver.outputs.key }}
     - name: Prepare Xcode Project
       run: ./prepare.sh
       env:
-        UPDATE_DEPS: ${{ (endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main')) && 'true' }} 
+        UPDATE_DEPS: ${{ (endsWith(github.ref,'features') || endsWith(github.ref,'main')) && 'true' }} 
     - name: Build Framework
       run: ./build.sh
     - name: Compute Checksum
@@ -113,32 +113,32 @@ jobs:
       id: compute
     - name: Install JQ
       run: brew install jq
-      if: ${{ endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main') || endsWith(github.head_ref,'develop') }}
+      if: ${{ endsWith(github.ref,'features') || endsWith(github.ref,'main') || endsWith(github.ref,'develop') }}
     - uses: actions/upload-artifact@v2
-      if: ${{ endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main') || endsWith(github.head_ref,'develop') }}
+      if: ${{ endsWith(github.ref,'features') || endsWith(github.ref,'main') || endsWith(github.ref,'develop') }}
       with:
         name: ${{ steps.semver.outputs.tag }}-${{ github.run_id }}
         path: build/CairoSVG.xcframework.zip
     - name: Update Package.swift
-      if: ${{ endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main') || endsWith(github.head_ref,'develop') }}
+      if: ${{ endsWith(github.ref,'features') || endsWith(github.ref,'main') || endsWith(github.ref,'develop') }}
       run: envsubst < Package.swift.template > Package.swift
       env:
          VERSION: ${{ steps.semver.outputs.tag }}
          CHECKSUM: ${{ steps.compute.outputs.checksum }}
     - name: Extract branch name
-      if: ${{ endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main') || endsWith(github.head_ref,'develop') }}
+      if: ${{ endsWith(github.ref,'features') || endsWith(github.ref,'main') || endsWith(github.ref,'develop') }}
       shell: bash
       run: echo "##[set-output name=name;]$(echo ${GITHUB_REF#refs/heads/})"
       id: branch 
     - name: Commit files
-      if: ${{ endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main') || endsWith(github.head_ref,'develop') }}
+      if: ${{ endsWith(github.ref,'features') || endsWith(github.ref,'main') || endsWith(github.ref,'develop') }}
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add Package.swift
         git commit -m "checksum update:${{ steps.semver.outputs.tag }}-$GITHUB_RUN_ID" -a
     - name: Push changes
-      if: ${{ endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main') || endsWith(github.head_ref,'develop') }}
+      if: ${{ endsWith(github.ref,'features') || endsWith(github.ref,'main') || endsWith(github.ref,'develop') }}
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.PERSONAL_TOKEN }}
