@@ -15,7 +15,7 @@ env:
 jobs:
   distribute:
     runs-on: macos-latest
-    if: "(startsWith(github.event.head_commit.message, 'checksum update')) && (${{ endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main') || endsWith(github.head_ref,'develop') }})"
+    if: "startsWith(github.event.head_commit.message, 'checksum update')"
 
     steps:
     - name: Get Artifact Name 
