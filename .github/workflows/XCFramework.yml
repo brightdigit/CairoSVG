@@ -1,6 +1,11 @@
 name: XCFramework
 
-on: [push]
+on:
+  push:
+    branches: 
+      - main
+      - features
+      - develop
 
 env:
   DEVELOPER_DIR: /Applications/Xcode_12_beta.app/Contents/Developer
@@ -73,11 +78,14 @@ jobs:
         persist-credentials: false
     - name: Caching Homebrew
       uses: actions/cache@v2
+      if: ${{ github.head_ref	== 'develop' }}
       with:
         path: /usr/local/Cellar
         key: ${{ runner.os }}-Homebrew
     - name: Prepare Xcode Project
       run: ./prepare.sh
+      env:
+        UPDATE_DEPS: ${{ github.head_ref	== 'develop' || 'true' }} 
     - name: Build Framework
       run: ./build.sh
     - name: Compute Checksum
@@ -89,7 +97,9 @@ jobs:
       run: brew install jq
     - name: Bump version and push tag
       run: |
-        TAG_NAME=$(curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' $GITHUB_API_URL/repos/${{ github.repository }}/releases | jq -r '.[0].tag_name' | xargs -I {} $GITHUB_WORKSPACE/semver bump patch {})
+        BUMP=$(declare -A parts=( ["main"]="major" ["features"]="minor"); echo ${parts[${GITHUB_REF#refs/*/}]:-patch});
+        TAG_NAME=$(curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' $GITHUB_API_URL/repos/${{ github.repository }}/releases | jq -r '.[0].tag_name' | xargs -I {} $GITHUB_WORKSPACE/semver bump $BUMP {})
+        echo $BUMP
         echo "::set-output name=tag::$TAG_NAME"
       id: semver
     - name: Output Tag
