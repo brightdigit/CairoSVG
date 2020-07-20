@@ -97,7 +97,7 @@ jobs:
       run: brew install jq
     - name: Bump version and push tag
       run: |
-        BUMP=$(declare -A parts=( ["main"]="major" ["features"]="minor"); echo ${parts[${GITHUB_REF#refs/*/}]:-patch});
+        BUMP=$(./part.sh ${GITHUB_REF#refs/*/});
         TAG_NAME=$(curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' $GITHUB_API_URL/repos/${{ github.repository }}/releases | jq -r '.[0].tag_name' | xargs -I {} $GITHUB_WORKSPACE/semver bump $BUMP {})
         echo $BUMP
         echo "::set-output name=tag::$TAG_NAME"
