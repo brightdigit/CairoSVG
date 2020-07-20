@@ -6,6 +6,8 @@ on:
       - main
       - features
       - develop
+      - 'feature/**'
+      - 'release/**'
 
 env:
   DEVELOPER_DIR: /Applications/Xcode_12_beta.app/Contents/Developer
@@ -13,7 +15,7 @@ env:
 jobs:
   distribute:
     runs-on: macos-latest
-    if: "startsWith(github.event.head_commit.message, 'checksum update')"
+    if: "(startsWith(github.event.head_commit.message, 'checksum update')) && (${{ endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main') || endsWith(github.head_ref,'develop') }})"
 
     steps:
     - name: Get Artifact Name 
@@ -37,9 +39,9 @@ jobs:
       run: |
         max_retry=10
         counter=0
-        until $ARTIFACT_METADATA
-        do
-          [[ $counter -ne 0 ]] && sleep($(( ($RANDOM % 20) * $counter )))
+        until [[ ! -z $ARTIFACT_METADATA ]]; do
+          SLEEP=$(( $RANDOM % 20 * $counter ))
+          sleep $SLEEP
           ARTIFACT_METADATA=$(curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' $GITHUB_API_URL/repos/${{ github.repository }}/actions/runs/${{ steps.run.outputs.id }}/artifacts | jq -r '.artifacts[] | select(.name == "${{ steps.commit.outputs.message }}")')
           [[ counter -eq $max_retry ]] && echo "Failed!" && exit 1
           ((counter++))
@@ -111,28 +113,32 @@ jobs:
       id: compute
     - name: Install JQ
       run: brew install jq
-    - name: Output Tag
-      run: echo ${{ steps.semver.outputs.tag }}
+      if: "${{ endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main') || endsWith(github.head_ref,'develop') }}"
     - uses: actions/upload-artifact@v2
+      if: "${{ endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main') || endsWith(github.head_ref,'develop') }}"
       with:
         name: ${{ steps.semver.outputs.tag }}-${{ github.run_id }}
         path: build/CairoSVG.xcframework.zip
     - name: Update Package.swift
+      if: "${{ endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main') || endsWith(github.head_ref,'develop') }}"
       run: envsubst < Package.swift.template > Package.swift
       env:
          VERSION: ${{ steps.semver.outputs.tag }}
          CHECKSUM: ${{ steps.compute.outputs.checksum }}
     - name: Extract branch name
+      if: "${{ endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main') || endsWith(github.head_ref,'develop') }}"
       shell: bash
       run: echo "##[set-output name=name;]$(echo ${GITHUB_REF#refs/heads/})"
       id: branch 
     - name: Commit files
+      if: "${{ endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main') || endsWith(github.head_ref,'develop') }}" 
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add Package.swift
         git commit -m "checksum update:${{ steps.semver.outputs.tag }}-$GITHUB_RUN_ID" -a
     - name: Push changes
+      if: "${{ endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main') || endsWith(github.head_ref,'develop') }}"
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.PERSONAL_TOKEN }}
