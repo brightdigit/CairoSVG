@@ -1,8 +1,8 @@
-#!/bin/sh
-#
-# Wrapper around `swift build' that uses pkg-config in config.sh
-# to determine compiler and linker flags
-#
-. ./config.sh
-[ -e Sources/${Mod}/${Module}.swift ] || ./generate-wrapper.sh
-exec swift build $CCFLAGS $LINKFLAGS "$@"
+#!/bin/bash
+rm -rf build 
+mkdir build
+xcodebuild test -scheme CairoSVGTests
+xcodebuild archive -scheme CairoSVG -configuration Release -archivePath ./build/CairoSVG.xcarchive SKIP_INSTALL=NO -arch x86_64
+xcodebuild -create-xcframework -framework ./build/CairoSVG.xcarchive/Products/Library/Frameworks/CairoSVG.framework -output ./build/CairoSVG.xcframework
+ditto -c -k --sequesterRsrc --keepParent build/CairoSVG.xcframework build/CairoSVG.xcframework.zip
+swift package compute-checksum build/CairoSVG.xcframework.zip

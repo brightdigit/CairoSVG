@@ -1,22 +1,24 @@
-// swift-tools-version:4.2
+// swift-tools-version:5.3
+// The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
-    name: "Cairo",
-    products: [
-        .library(name: "Cairo", targets: ["Cairo"]),
-    ],
-    dependencies: [
-        .package(url: "https://github.com/rhx/SwiftGObject.git", .branch("master"))
-    ],
-    targets: [
-	.systemLibrary(name: "CCairo", pkgConfig: "cairo glib-2.0 gio-unix-2.0 librsvg-2.0",
-	    providers: [
-		.brew(["cairo", "glib", "glib-networking", "gobject-introspection", "librsvg"]),
-		.apt(["libcairo2-dev", "libglib2.0-dev", "glib-networking", "gobject-introspection", "libgirepository1.0-dev", "librsvg"])
-	    ]),
-        .target(name: "Cairo", dependencies: ["CCairo", "GLibObject"]),
-        .testTarget(name: "CairoTests", dependencies: ["Cairo"]),
-    ]
+  name: "CairoSVG",
+  products: [
+    // Products define the executables and libraries produced by a package, and make them visible to other packages.
+    .library(
+      name: "CairoSVG",
+      targets: ["CairoSVG"]
+    )
+  ],
+  targets: [
+    // Targets are the basic building blocks of a package. A target can define a module or a test suite.
+    // Targets can depend on other targets in this package, and on products in packages which this package depends on.
+    .binaryTarget(
+      name: "CairoSVG",
+      url: "https://github.com/brightdigit/CairoSVG/releases/download/0.1.10/CairoSVG.xcframework.zip",
+      checksum: "e5f3f96345c0a0bd587190bc395921aa89b8c8bc89ceabd691df7ed5d6335be5"
+    )
+  ]
 )
