@@ -6,12 +6,117 @@ env:
   DEVELOPER_DIR: /Applications/Xcode_12_beta.app/Contents/Developer
 
 jobs:
-  build:
+  distribute:
     runs-on: macos-latest
+    if: "startsWith(github.event.head_commit.message, 'checksum update')"
+
+    steps:
+    - name: Get Artifact Name 
+      run: |
+        COMMIT_MESSAGE=$(echo "${{ github.event.head_commit.message }}" | cut -d: -f2)
+        echo "::set-output name=message::$COMMIT_MESSAGE"
+      id: commit
+    - name: Get Tag Name 
+      run: |
+        TAG_NAME=$(echo "${{ steps.commit.outputs.message }}" | cut -d- -f1)
+        echo "::set-output name=name::$TAG_NAME"
+      id: tag
+    - name: Get Run Id 
+      run: |
+        RUN_ID=$(echo "${{ steps.commit.outputs.message }}" | cut -d- -f2)
+        echo "::set-output name=id::$RUN_ID"
+      id: run
+    - name: Install JQ
+      run: brew install jq
+    - name: Parse Artifact Metadata
+      run: |
+        ARTIFACT_METADATA=$(curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' $GITHUB_API_URL/repos/${{ github.repository }}/actions/runs/${{ steps.run.outputs.id }}/artifacts | jq -r '.artifacts[] | select(.name == "${{ steps.commit.outputs.message }}")')
+        ARTIFACT_URL=$(jq .archive_download_url <<< $ARTIFACT_METADATA)
+        ARTIFACT_ID=$(jq .id <<< $ARTIFACT_METADATA)
+        echo "::set-output name=id::$ARTIFACT_ID"
+        echo "::set-output name=url::$ARTIFACT_URL"
+      id: artifact
+    - name: Download Zip
+      run: |
+        curl  -SL -L --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' ${{ steps.artifact.outputs.url }} | tar -xf - -C $GITHUB_WORKSPACE
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ steps.tag.outputs.name }}
+        release_name: ${{ steps.tag.outputs.name }}
+        draft: false
+        prerelease: false
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: CairoSVG.xcframework.zip
+        asset_name: CairoSVG.xcframework.zip
+        asset_content_type: application/zip
+    - name: Delete Artifact
+      run: |
+        curl -X DELETE --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' $GITHUB_API_URL/repos/${{ github.repository }}/actions/artifacts/${{ steps.artifact.outputs.id }}
+  upload:
+    runs-on: macos-latest
+    if: "!startsWith(github.event.head_commit.message, 'checksum update')"
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        persist-credentials: false
+    - name: Caching Homebrew
+      uses: actions/cache@v2
+      with:
+        path: /usr/local/Cellar
+        key: ${{ runner.os }}-Homebrew
     - name: Prepare Xcode Project
       run: ./prepare.sh
     - name: Build Framework
       run: ./build.sh
+    - name: Compute Checksum
+      run: |
+        CHECKSUM=$(swift package compute-checksum build/CairoSVG.xcframework.zip)
+        echo "::set-output name=checksum::$CHECKSUM"
+      id: compute
+    - name: Install JQ
+      run: brew install jq
+    - name: Bump version and push tag
+      run: |
+        TAG_NAME=$(curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' $GITHUB_API_URL/repos/${{ github.repository }}/releases | jq -r '.[0].tag_name' | xargs -I {} $GITHUB_WORKSPACE/semver bump patch {})
+        echo "::set-output name=tag::$TAG_NAME"
+      id: semver
+    - name: Output Tag
+      run: echo ${{ steps.semver.outputs.tag }}
+    - uses: actions/upload-artifact@v2
+      with:
+        name: ${{ steps.semver.outputs.tag }}-${{ github.run_id }}
+        path: build/CairoSVG.xcframework.zip
+    - name: Update Package.swift
+      run: envsubst < Package.swift.template > Package.swift
+      env:
+         VERSION: ${{ steps.semver.outputs.tag }}
+         CHECKSUM: ${{ steps.compute.outputs.checksum }}
+    - name: Extract branch name
+      shell: bash
+      run: echo "##[set-output name=name;]$(echo ${GITHUB_REF#refs/heads/})"
+      id: branch 
+    - name: Commit files
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add Package.swift
+        git commit -m "checksum update:${{ steps.semver.outputs.tag }}-$GITHUB_RUN_ID" -a
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.PERSONAL_TOKEN }}
+        branch: ${{ steps.branch.outputs.name }}
+        force: true
+
+

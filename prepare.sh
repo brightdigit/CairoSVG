@@ -1,19 +1,22 @@
 #!/bin/bash
 
+function join_by { local IFS="$1"; shift; echo "$*"; }
+
 rm -rf Dependencies
 mkdir -p Dependencies
+
 libraries=(lzo cairo fontconfig freetype fribidi gdk-pixbuf gettext glib graphite2 harfbuzz icu4c libcroco libffi libpng librsvg pango pcre pixman)
+
+if [[ $UPDATE_DEPS = true ]]; then
+  brew rm  --ignore-dependencies --force ${libraries[*]}
+  brew update
+fi
+
+HOMEBREW_NO_AUTO_UPDATE=1 brew install ${libraries[*]}
+
 for library in "${libraries[@]}"
 do
-   brew rm  --ignore-dependencies --force $library
-   ##rsync -r --prune-empty-dirs --include '*/' --include '*.h'  --include '*.dylib' --exclude '*' /usr/local/Cellar/$library Dependencies
-   # do whatever on $i
-done
-for library in "${libraries[@]}"
-do
-   brew install $library
    rsync -r --prune-empty-dirs --include '*/' --include '*.h'  --include '*.dylib' --exclude '*' /usr/local/Cellar/$library Dependencies
-   # do whatever on $i
 done
 
 DEPFILE="$(mktemp)"
@@ -55,6 +58,7 @@ cat $CPFILE >> dependencies.yml
 
 rm Dependencies/gettext/0.20.2_1/include/textstyle/stdbool.h
 
-brew install xcodegen
+HOMEBREW_NO_AUTO_UPDATE=1 brew install xcodegen
+HOMEBREW_NO_AUTO_UPDATE=1 brew link xcodegen
 
 xcodegen
