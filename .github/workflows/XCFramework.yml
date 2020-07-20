@@ -35,7 +35,15 @@ jobs:
       run: brew install jq
     - name: Parse Artifact Metadata
       run: |
-        ARTIFACT_METADATA=$(curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' $GITHUB_API_URL/repos/${{ github.repository }}/actions/runs/${{ steps.run.outputs.id }}/artifacts | jq -r '.artifacts[] | select(.name == "${{ steps.commit.outputs.message }}")')
+        max_retry=10
+        counter=0
+        until $ARTIFACT_METADATA
+        do
+          [[ $counter -ne 0 ]] && sleep($(( ($RANDOM % 20) * $counter )))
+          ARTIFACT_METADATA=$(curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' $GITHUB_API_URL/repos/${{ github.repository }}/actions/runs/${{ steps.run.outputs.id }}/artifacts | jq -r '.artifacts[] | select(.name == "${{ steps.commit.outputs.message }}")')
+          [[ counter -eq $max_retry ]] && echo "Failed!" && exit 1
+          ((counter++))
+        done
         ARTIFACT_URL=$(jq .archive_download_url <<< $ARTIFACT_METADATA)
         ARTIFACT_ID=$(jq .id <<< $ARTIFACT_METADATA)
         echo "::set-output name=id::$ARTIFACT_ID"
