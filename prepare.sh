@@ -1,16 +1,18 @@
 #!/bin/bash
 
+function join_by { local IFS="$1"; shift; echo "$*"; }
+
 rm -rf Dependencies
 mkdir -p Dependencies
 
 libraries=(lzo cairo fontconfig freetype fribidi gdk-pixbuf gettext glib graphite2 harfbuzz icu4c libcroco libffi libpng librsvg pango pcre pixman)
 
 if [[ $UPDATE_DEPS = true ]]; then
-  brew rm  --ignore-dependencies --force $libraries
+  brew rm  --ignore-dependencies --force ${libraries[*]}
   brew update
 fi
 
-HOMEBREW_NO_AUTO_UPDATE=1 brew install $libraries
+HOMEBREW_NO_AUTO_UPDATE=1 brew install ${libraries[*]}
 
 for library in "${libraries[@]}"
 do
