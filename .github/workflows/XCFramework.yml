@@ -76,12 +76,20 @@ jobs:
     - uses: actions/checkout@v2
       with:
         persist-credentials: false
+    - name: Bump version and push tag
+      run: |
+        BUMP=$(./part.sh ${GITHUB_REF#refs/*/});
+        TAG_NAME=$(curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' $GITHUB_API_URL/repos/${{ github.repository }}/releases | jq -r '.[0].tag_name' | xargs -I {} $GITHUB_WORKSPACE/semver bump $BUMP {})
+        CACHE_KEY=$(echo $TAG_NAME | cut -d. -f1,2)
+        echo "::set-output name=tag::$TAG_NAME"
+        echo "::set-output name=key::$CACHE_KEY"
+      id: semver
     - name: Caching Homebrew
       uses: actions/cache@v2
       if: ${{ !endsWith(github.head_ref,'features') && !endsWith(github.head_ref,'main')}}
       with:
         path: /usr/local/Cellar
-        key: ${{ runner.os }}-Homebrew
+        key: ${{ runner.os }}-Homebrew-${{ steps.semver.outputs.key }}
     - name: Prepare Xcode Project
       run: ./prepare.sh
       env:
@@ -95,13 +103,6 @@ jobs:
       id: compute
     - name: Install JQ
       run: brew install jq
-    - name: Bump version and push tag
-      run: |
-        BUMP=$(./part.sh ${GITHUB_REF#refs/*/});
-        TAG_NAME=$(curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' $GITHUB_API_URL/repos/${{ github.repository }}/releases | jq -r '.[0].tag_name' | xargs -I {} $GITHUB_WORKSPACE/semver bump $BUMP {})
-        echo $BUMP
-        echo "::set-output name=tag::$TAG_NAME"
-      id: semver
     - name: Output Tag
       run: echo ${{ steps.semver.outputs.tag }}
     - uses: actions/upload-artifact@v2
