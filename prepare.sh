@@ -7,12 +7,22 @@ mkdir -p Dependencies
 
 libraries=(lzo cairo fontconfig freetype fribidi gdk-pixbuf gettext glib graphite2 harfbuzz icu4c libcroco libffi libpng librsvg pango pcre pixman)
 
-if [[ $UPDATE_DEPS = true ]]; then
+if (( $UPDATE_DEPS )); then
+  echo "Updating Homebrew..."
   brew rm  --ignore-dependencies --force ${libraries[*]}
   brew update
+else
+  echo "Disabling Homebrew Auto-Update..."
+  HOMEBREW_NO_AUTO_UPDATE=1
 fi
 
-HOMEBREW_NO_AUTO_UPDATE=1 brew install ${libraries[*]}
+
+brew install ${libraries[*]}
+
+if (( $UPDATE_DEPS )); then
+  echo "Upgrading Homebrew..."
+  brew upgrade --build-from-source ${libraries[*]}
+fi
 
 for library in "${libraries[@]}"
 do
@@ -58,7 +68,7 @@ cat $CPFILE >> dependencies.yml
 
 rm Dependencies/gettext/0.20.2_1/include/textstyle/stdbool.h
 
-HOMEBREW_NO_AUTO_UPDATE=1 brew install xcodegen
-HOMEBREW_NO_AUTO_UPDATE=1 brew link xcodegen
+brew install xcodegen
+brew link xcodegen
 
 xcodegen
