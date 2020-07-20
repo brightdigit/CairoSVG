@@ -78,14 +78,14 @@ jobs:
         persist-credentials: false
     - name: Caching Homebrew
       uses: actions/cache@v2
-      if: ${{ github.head_ref	== 'develop' }}
+      if: ${{ !endsWith(github.head_ref,'features') && !endsWith(github.head_ref,'main')}
       with:
         path: /usr/local/Cellar
         key: ${{ runner.os }}-Homebrew
     - name: Prepare Xcode Project
       run: ./prepare.sh
       env:
-        UPDATE_DEPS: ${{ github.head_ref	== 'develop' || 'true' }} 
+        UPDATE_DEPS: ${{ (endsWith(github.head_ref,'features') || endsWith(github.head_ref,'main')) && 'true' }} 
     - name: Build Framework
       run: ./build.sh
     - name: Compute Checksum
