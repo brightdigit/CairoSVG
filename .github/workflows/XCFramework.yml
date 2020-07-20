@@ -39,6 +39,7 @@ jobs:
     - name: Download Zip
       run: |
         curl  -SL -L --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' ${{ steps.artifact.outputs.url }} | tar -xf - -C $GITHUB_WORKSPACE
+        test -f CairoSVG.xcframework.zip
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
