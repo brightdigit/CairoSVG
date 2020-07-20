@@ -78,7 +78,7 @@ jobs:
         persist-credentials: false
     - name: Caching Homebrew
       uses: actions/cache@v2
-      if: ${{ !endsWith(github.head_ref,'features') && !endsWith(github.head_ref,'main')}
+      if: ${{ !endsWith(github.head_ref,'features') && !endsWith(github.head_ref,'main')}}
       with:
         path: /usr/local/Cellar
         key: ${{ runner.os }}-Homebrew
